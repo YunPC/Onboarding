@@ -30,7 +30,6 @@ public class RandomModule extends ReactContextBaseJavaModule {
       for(int i = 0; i < 3; i++){
         writableArray.pushInt((Integer) rd.nextInt(255));
       }
-      // promise.invoke(writableArray);
 
       promise.resolve(writableArray);
     } catch(Exception e){
