@@ -1,11 +1,5 @@
 import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  NativeModules,
-  Pressable,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, Pressable} from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -15,14 +9,15 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import {RandomModule} from './lib/random';
 
 const RandomScreen = () => {
-  const {RandomModule} = NativeModules;
   const [backgroundColor, setBackgroundColor] = useState('orange');
+
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
-  const panGestureEvent = useAnimatedGestureHandler<
+  const dragView = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
     {
       translateX: number;
@@ -40,7 +35,7 @@ const RandomScreen = () => {
     onEnd: () => {},
   });
 
-  const rStyle = useAnimatedStyle(() => {
+  const transformStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {translateX: translateX.value},
@@ -49,19 +44,22 @@ const RandomScreen = () => {
     };
   });
 
+  const changeColor = () => {
+    RandomModule.getRandomColor().then(value => {
+      const [red, green, blue] = value;
+      setBackgroundColor(`rgb(${red}, ${green}, ${blue})`);
+    });
+  };
+
   return (
     <SafeAreaView>
-      <Pressable
-        onPress={() => {
-          RandomModule.getRandomColor().then(value => {
-            const [red, green, blue] = value;
-            setBackgroundColor(`rgb(${red}, ${green}, ${blue})`);
-          });
-        }}>
+      <Pressable onPress={changeColor}>
         <Text style={styles.button}>Get Color!</Text>
       </Pressable>
-      <PanGestureHandler onGestureEvent={panGestureEvent}>
-        <Animated.View style={[styles.box, {backgroundColor}, rStyle]} />
+      <PanGestureHandler onGestureEvent={dragView}>
+        <Animated.View
+          style={[styles.box, {backgroundColor}, transformStyle]}
+        />
       </PanGestureHandler>
     </SafeAreaView>
   );
