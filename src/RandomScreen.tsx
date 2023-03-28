@@ -36,7 +36,6 @@ const RandomScreen = () => {
     onActive: (event, context) => {
       translateX.value = event.translationX + context.translateX;
       translateY.value = event.translationY + context.translateY;
-      // console.log(translateX.value);
     },
     onEnd: () => {},
   });
